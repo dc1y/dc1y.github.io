@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.6" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.6">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.6" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.0.6',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="在 《Hexo 你的专属博客》 一文中，你了解到了如何搭建 Hexo 博客站点并部署到远程仓库，实现了博文源码及站点配置的备份，并且还探讨了如何在多个设备上同步博客站点。 本文主要包括两方面的内容，首先是了解 Hexo 中与写作的相关事项和概念，其次是介绍如何利用 Visual Studio Code 来打造一个专注无干扰的 Markdown 写作环境。读完本文，你就可以做到心无挂碍、高效流畅地撰">
+<meta name="keywords" content="Hexo, Visual Studio Code, Markdown">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VS Code，打造沉浸式 Hexo 写作环境">
+<meta property="og:url" content="https://dc1y.github.io/blogging-in-hexo-with-vscode/index.html">
+<meta property="og:site_name" content="dc1y">
+<meta property="og:description" content="在 《Hexo 你的专属博客》 一文中，你了解到了如何搭建 Hexo 博客站点并部署到远程仓库，实现了博文源码及站点配置的备份，并且还探讨了如何在多个设备上同步博客站点。 本文主要包括两方面的内容，首先是了解 Hexo 中与写作的相关事项和概念，其次是介绍如何利用 Visual Studio Code 来打造一个专注无干扰的 Markdown 写作环境。读完本文，你就可以做到心无挂碍、高效流畅地撰">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://dc1y.github.io/imgs/hexo_layout.png">
+<meta property="og:updated_time" content="2018-03-16T08:05:11.364Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="VS Code，打造沉浸式 Hexo 写作环境">
+<meta name="twitter:description" content="在 《Hexo 你的专属博客》 一文中，你了解到了如何搭建 Hexo 博客站点并部署到远程仓库，实现了博文源码及站点配置的备份，并且还探讨了如何在多个设备上同步博客站点。 本文主要包括两方面的内容，首先是了解 Hexo 中与写作的相关事项和概念，其次是介绍如何利用 Visual Studio Code 来打造一个专注无干扰的 Markdown 写作环境。读完本文，你就可以做到心无挂碍、高效流畅地撰">
+<meta name="twitter:image" content="https://dc1y.github.io/imgs/hexo_layout.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://dc1y.github.io/blogging-in-hexo-with-vscode/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>VS Code，打造沉浸式 Hexo 写作环境 | dc1y</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">dc1y</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">笃行信道，自强不息</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+</li>
+
+      
+
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://dc1y.github.io/blogging-in-hexo-with-vscode/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="czq">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dc1y">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">VS Code，打造沉浸式 Hexo 写作环境</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-13T21:58:54+08:00">2018-03-13</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/实用工具/" itemprop="url" rel="index"><span itemprop="name">实用工具</span></a></span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/实用工具/Hexo/" itemprop="url" rel="index"><span itemprop="name">Hexo</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在 <a href="/hexo-your-blog/" title="《Hexo 你的专属博客》">《Hexo 你的专属博客》</a> 一文中，你了解到了如何搭建 Hexo 博客站点并部署到远程仓库，实现了博文源码及站点配置的备份，并且还探讨了如何在多个设备上同步博客站点。</p>
+<p>本文主要包括两方面的内容，首先是了解 Hexo 中与写作的相关事项和概念，其次是介绍如何利用 Visual Studio Code 来打造一个专注无干扰的 Markdown 写作环境。读完本文，你就可以做到心无挂碍、高效流畅地撰写你的博文了。<br><a id="more"></a></p>
+<h1 id="Hexo-的常规写作方式"><a href="#Hexo-的常规写作方式" class="headerlink" title="Hexo 的常规写作方式"></a>Hexo 的常规写作方式</h1><p>现在，先来了解一下 Hexo 的常规写作方式，顺便了解 Hexo 的一些非常重要的概念。</p>
+<p>按 <a href="https://hexo.io/zh-cn/docs/writing.html" target="_blank" rel="noopener">Hexo 官方文档</a> 的说明，创建新博文的命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new [layout] &lt;title&gt;</span><br></pre></td></tr></table></figure>
+<p>运行这个命令，即可为新博文创建一个 Markdown（.md）文件。并且，若此时启动 Hexo 本地服务器，也可看到博文已经添加到站点中了。这个命令有两个选项：</p>
+<ul>
+<li><code>layout</code>：为新博文指定布局，未指定时默认采用 post 布局。其余两个布局选项分别是 draft 和 page。</li>
+<li><code>title</code>：指定新博文的文件名，同时也是新博文在页面上最初显示的标题。若指定的标题中包含空格，则必须包围在一对半角双引号中（建议总是加上双引号，省心）。标题也可以是中文，不过英文的文件名兼容性更好。此外，Hexo 会自动将文件名中的下划线（_）自动更改为连字符（-）。</li>
+</ul>
+<h2 id="关于-Hexo-的布局"><a href="#关于-Hexo-的布局" class="headerlink" title="关于 Hexo 的布局"></a>关于 Hexo 的布局</h2><p>所谓的 <strong>布局（layout）</strong>，就是博文最终呈现出来的外观排版。如下图所示，你在每篇博文中输入的内容，将被 “嵌入” 到最终页面的 “正文” 位置。而正文之外的其它内容，如页眉、页脚及边栏等，则由 Hexo 根据你指定的布局及站点主题自动生成。</p>
+<p><img src="../imgs/hexo_layout.png" alt="Hexo 布局"></p>
+<p>某种布局最终呈现出来的版面外观效果，由当前主题的 layout 文件夹中的同名 .ejs 文件定义。在生成最终的静态页面时，Hexo 会自动把每一篇博文 “嵌入” 到相应的 .ejs 布局中——_posts 中的博文嵌入 post.ejs 布局，_drafts 中的博文嵌入 draft.ejs 布局，而 page 博文则采用了 page.ejs 布局。</p>
+<p>当然，最终的版面效果取决于你使用的主题。不同的主题定义了不同内容的 .ejs 文件集，而你的博文，总是 “一如既往” 地嵌入到相应的布局中的某个位置。这，也是你能够随心所欲地切换站点主题的原因。</p>
+<p>作为测试，运行 <code>hexo n &quot;test&quot;</code> 命令创建一篇博文，观察 Hexo 自动在 source\_post 文件夹中生成名为 test.md 的文件。启动 Hexo 服务器并在浏览器中查看本地站点和博文，观察并体会博文与其它布局元素之间的关系。</p>
+<h2 id="关于-Hexo-的模板"><a href="#关于-Hexo-的模板" class="headerlink" title="关于 Hexo 的模板"></a>关于 Hexo 的模板</h2><p>在你的编辑器中打开刚刚生成的 test.md 文件，可发现文件中已包含如下内容：</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">title:</span> <span class="string">test</span></span><br><span class="line"><span class="attr">date:</span> <span class="number">2018</span><span class="bullet">-03</span><span class="bullet">-07</span> <span class="number">14</span><span class="string">:45:03</span></span><br><span class="line"><span class="attr">tags:</span></span><br><span class="line"><span class="meta">---</span></span><br></pre></td></tr></table></figure>
+<p>两个 <code>---</code> 及它们之间的内容，就是所谓的 <strong>front matter</strong>，用于保存关于博文的元数据。除博文标题及创建时间外，还可以在这里指定博文的标签、类别、关键字等等。完整的 front matter 参数及用途，请参阅 <a href="https://hexo.io/zh-cn/docs/front-matter.html" target="_blank" rel="noopener">Hexo 文档</a>。</p>
+<p>这些 front matter 源自于 Hexo 的模板。在创建博文时，Hexo 将根据你指定的 <code>layout</code>，自动对博文应用 scaffolds 文件夹中的相应模板。由于刚才创建博文时采用了默认的 post 布局，因此 Hexo 将自动套用 scaffolds\post.md 模板来生成 test.md。</p>
+<p>在编辑器中打开 scaffolds\post.md 模板，可发现其中包含与 test.md 中对应的 front matter。当然，双花括号之间的 <code>title</code> 和 <code>date</code>，已被自动替换为新博文的标题和创建时间：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">title:</span> <span class="string">&#123;&#123;title&#125;&#125;</span></span><br><span class="line"><span class="attr">date:</span> <span class="string">&#123;&#123;date&#125;&#125;</span></span><br><span class="line"><span class="attr">tags:</span></span><br><span class="line"><span class="meta">---</span></span><br></pre></td></tr></table></figure>
+<p>Hexo 的默认模板比较简陋，你可以根据实际需要在模板中增加常用的元数据，如更新时间、类别及关键字等，以便在今后创建博文时，自动生成更完整的 front matter。例如：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">title:</span> <span class="string">&#123;&#123;title&#125;&#125;</span></span><br><span class="line"><span class="attr">date:</span> <span class="string">&#123;&#123;date&#125;&#125;</span></span><br><span class="line"><span class="attr">updated:</span> <span class="string">&#123;&#123;date&#125;&#125;</span></span><br><span class="line"><span class="attr">tags:</span></span><br><span class="line"><span class="attr">categories:</span></span><br><span class="line"><span class="attr">keywords:</span></span><br><span class="line"><span class="meta">---</span></span><br></pre></td></tr></table></figure>
+<p>回到 test.md，把 front matter 中双花括号中的 <code>title</code> 修改为 <code>博文测试</code>，并在后一个 <code>---</code> 之后随便输入一些内容作为博文的正文。告一段落后，在浏览器中刷新博客站点，可发现新博文的标题和内容也随着更新了。可见，Hexo 服务器能够自动监视博文内容的改变，并且无需重启。</p>
+<blockquote>
+<p><strong>提示</strong>：博文的页面标题不必总是与文件名保持一致。随着你撰写越来越多的博文，你会发现现实中往往如此。即使是 Hexo 默认提供的 “Hello World” 博文，其文件名也是不一致的 “hello-world.md”。</p>
+</blockquote>
+<h2 id="关于标签和类别"><a href="#关于标签和类别" class="headerlink" title="关于标签和类别"></a>关于标签和类别</h2><p>当你的博文数量越来越多的时候，你或你的读者要怎样才能快速找到想要阅读的博文呢？Hexo 通过标签和类别提供了两种归类和检索博文的方式。</p>
+<p>标签通常是从博文内容提炼的一个或多个关键词。你可以在 front matter 的 <code>tags:</code> 节点中，按如下方式为每一篇博文指定一个或多个标签：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 若只有单个标签，则在同一行中指定（注意冒号后有一个空格）</span></span><br><span class="line"><span class="attr">tags:</span> <span class="string">hexo</span></span><br><span class="line"><span class="comment"># 若需要多个标签，则以多行方式指定</span></span><br><span class="line"><span class="attr">tags:</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">hexo</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">git</span></span><br></pre></td></tr></table></figure>
+<p>指定标签后，刷新站点页面，即可在侧边栏看到 “标签” 栏目。单击该栏目中的某个标签，将列出所有含有该标签的博文的链接；单击任一链接，即可打开并阅读相应的博文。</p>
+<p>除标签外，你还可以从另一维度给你的博文分类。在 front matter 中增加 <code>categories:</code> 节点，并指定博文所属的一个或多个类别。同样，刷新站点可马上看到 “分类” 栏目：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 若只有单个类别，则在同一行中指定（注意冒号后有一个空格）</span></span><br><span class="line"><span class="attr">categories:</span></span><br><span class="line"><span class="comment"># 若需要多个类别，则以多行方式指定</span></span><br><span class="line"><span class="attr">categories:</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">实用工具</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">Hexo</span></span><br></pre></td></tr></table></figure>
+<p>需要注意的是，与多个标签并无主次之分不同，多个类别间具有层级关系。首先列出的类别为一级类别，后续列出的类别依次为其前面类别之下的子类别。以上面的多类别设置为例，页面上将把 “Hexo” 类别缩进显示在 “实用工具” 类别之下，表示 “Hexo” 是 “实用工具” 中的一个子类别。</p>
+<blockquote>
+<p><strong>提示</strong>：不同的主题，可能采用不同的方式来呈现类别，例如，Hueman 主题将以菜单的形式来显示类别。</p>
+</blockquote>
+<h2 id="关于-draft-和-page"><a href="#关于-draft-和-page" class="headerlink" title="关于 draft 和 page"></a>关于 draft 和 page</h2><p>前面提到，创建新博文时，还可以选择 draft 和 page 布局。难道，除了写博文之外，你还需要写别的什么吗？</p>
+<p>是的。你还可以使用 draft 布局来创建草稿或不想公开发表的博文，而 page 布局则可为你的博客站点增加功能性的页面。</p>
+<p>实际上，新建博文命令的 <code>layout</code> 参数也决定了新生成的博文的存放位置。采用 post 布局的博文文件将自动存放到 source\_posts 文件夹中，draft 博文存入 source\_drafts 文件夹，而 page 页面则直接存放在 source 文件夹中。</p>
+<p>假设你突然产生了一个想法，但还不够成熟，也暂时没时间将其写成正式的博文，那么，你可以用 <code>hexo n draft &quot;my-idea&quot;</code> 来创建一篇草稿，并在其中快速且粗略地记下这个想法。当然，你也可以利用这个草稿来收集相关的资料。</p>
+<blockquote>
+<p><strong>提示</strong>：如果你跟我一样，希望每次新建博文都从草稿开始，则可在站点配置文件中，把 <code>default_layout</code> 设置为 <code>draft</code>。这样运行 <code>hexo n &quot;&lt;filename&gt;&quot;</code> 命令就将直接创建草稿，而不是正式的博文。</p>
+</blockquote>
+<p>默认时 Hexo 不会在站点中显示草稿，也不会在远程仓库中公开发布（放心，只是没有公开发布到 master 分支而已，草稿的源码依然会备份到 src 分支）。在逐步润饰完善草稿的过程中，如果你想要预览草稿的效果，只需在启动 Hexo 服务器时加上 <code>--drafts</code> 参数，如 <code>hexo s --drafts</code>，即可让本地站点同时显示出所有草稿和博文。</p>
+<p>最后，当你打算把草稿发布为正式的博文时，运行 <code>hexo publish &quot;&lt;filename&gt;&quot;</code> 命令来把把指定的草稿从 source\_drafts 中转移到 source\_posts 中，并自动填写发布时间。从这时候起，这篇草稿就会像普通的博文一样公开发布了。</p>
+<blockquote>
+<p><strong>警告</strong>：不要把站点配置中的 <code>render_drafts</code> 设置为 <code>true</code>，这将导致所有草稿也被公开发布，除非你想公开尚未完成的或隐私的博文。</p>
+</blockquote>
+<p>至于使用 page 布局来生成功能性页面方面，给站点添加 “关于我” 的页面，就是一个很好的例子。运行如下命令来创建自我介绍页面：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo n page <span class="string">"about"</span></span><br></pre></td></tr></table></figure>
+<p>Hexo 自动在 source 文件夹中生成 about\index.md 文件。在编辑器中打开该文件，并输入你的简介，完成后保存。然后，打开主题配置文件（例如themes\landscape\_config.yml），并在 <code>menu</code> 中添加 <code>About: /about</code> 菜单。如下：</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">menu:</span></span><br><span class="line"><span class="attr">  Home:</span> <span class="string">/</span></span><br><span class="line"><span class="attr">  Archives:</span> <span class="string">/archives</span></span><br><span class="line"><span class="attr">  About:</span> <span class="string">/about</span></span><br></pre></td></tr></table></figure>
+<p>现在，你已经掌握了 Hexo 中与博文相关的基本概念了。遵循简洁轻便低入侵性的 Markdown 语法，你可以开始 “专注无干扰” 地撰写你的博文了。</p>
+<blockquote>
+<p><strong>提示</strong>：Markdown 是一种轻量级的纯文本标记语言，只需输入少量标记，即可生成格式优美的印刷级排版。如果你还不了解 Markdown，可参考 <a href="http://wowubuntu.com/markdown/basic.html" target="_blank" rel="noopener">Markdown 快速入门</a>。</p>
+</blockquote>
+<h1 id="用-Visual-Studio-Code-撰写博文"><a href="#用-Visual-Studio-Code-撰写博文" class="headerlink" title="用 Visual Studio Code 撰写博文"></a>用 Visual Studio Code 撰写博文</h1><p>专注无干扰？没错，Markdown 语法本身的确简洁流畅，但在创建、编辑和预览博文的过程中，既要运行 Git Bash 并输入命令，又要在文本编辑器中一层层寻找并打开文件，还是会时不时打断写作思路的。</p>
+<p>说得好！你已经想到了，但你还不知道，你需要使用 <strong>Visual Studio Code</strong>。</p>
+<p>Visual Studio Code（后称 VS Code）是微软出品的一个跨平台、轻量级且功能强大的代码编辑器，原生支持 JavaScript、TypeScript 及 Node.js，并且可通过扩展（即插件）来支持 C++、C#、Java 及 Python 等几乎所有语言，当然也包括你在 Hexo 中撰写博文所使用的 Markdown 语言。VS Code 一经推出即好评如潮，是文本或代码编辑器的不二之选。</p>
+<blockquote>
+<p><strong>提示</strong>：访问 <a href="https://code.visualstudio.com/" target="_blank" rel="noopener">VS Code 官方站点</a> 来获取更多相关信息。</p>
+</blockquote>
+<p>近年来，各种各样的 Markdown 编辑器层出不穷，在线的离线的都有。在我们的情形中，VS Code 之所以能够脱颖而出，是因为 VS Code 在界面中集成了一个终端，默认配置为使用 Windows PowerShell。在这个集成终端中，你可以输入并执行任何命令，无论是你已渐渐熟悉的 <code>hexo</code> 命令、还是 <code>git</code> 命令，以及 Node.js 的 <code>npm</code> 命令，都可以信手拈来。</p>
+<blockquote>
+<p><strong>提示</strong>：如果你希望使用其它终端（比如 Git Bash），则可在 VS Code 中按下 F1 键打开 “命令面板”，输入 <code>Select Default Shell</code> 后回车，然后从清单中选择 Git Bash 即可。</p>
+</blockquote>
+<p>有了这个多才多艺的 VS Code，你就可以进入真正 “专注无干扰” 地撰写博文的禅境了。</p>
+<h2 id="进入写作禅境"><a href="#进入写作禅境" class="headerlink" title="进入写作禅境"></a>进入写作禅境</h2><p>启动 VS Code，选择 <strong>文件 | 打开文件夹</strong> 打开你的博客站点文件夹。</p>
+<p>按下 <strong>Ctrl+`</strong> 激活 VS Code 下方的 “终端” 面板，输入 <code>hexo n &quot;myblog&quot;</code> 并回车。片刻之后，source\_posts 中就生成了 myblog.md 文件。</p>
+<blockquote>
+<p><strong>提示</strong>：你应该已经了解到，几乎所有的 Hexo 命令都有对应的简化版本，例如 <code>hexo n</code> 相当于 <code>hexo new</code>、<code>hexo s</code> 相当于 <code>hexo server</code> 等等。关于完整的 Hexo 命令清单，请参阅 <a href="https://hexo.io/zh-cn/docs/commands.html" target="_blank" rel="noopener">Hexo 文档</a>。</p>
+</blockquote>
+<p>按下 <strong>Ctrl+P</strong> 激活 VS Code 的 “快速打开” 面板，并输入刚刚创建的文件名 <code>myblog</code>，从弹出的清单中选择 “myblog.md source\_posts” 并回车，VS Code 随即在编辑器窗口中打开这个文件。</p>
+<p>接下来，想必你已经知道了，不外乎就是像平常一样修改 front matter，遵循 Markdown 规则来撰写你的博文了。</p>
+<p>如果想预览博文，可按下 <strong>Ctrl+K, V</strong> 打开 VS Code 自带的 Markdown 预览窗口。当然了，你在这里看到的，只是博文本身内容的预览。</p>
+<p>如果想预览整体效果，可激活终端并执行 <code>hexo s -o</code>，启动 Hexo 本地服务器并自动在默认浏览器中打开博客站点（这是 <code>-o</code> 选项的效果）。</p>
+<blockquote>
+<p><strong>提示</strong>：启动 Hexo 服务器后，当前的终端就被占用了。如果需要执行其它命令，同时又不想按下 <strong>Ctrl+C</strong> 来关闭 Hexo 服务器，则可按下 <strong>Ctrl+Shift+`</strong> 来打开一个新的集成终端（终端面板右上角的下拉列表，可用来在不同的终端间切换）。</p>
+</blockquote>
+<p>你可能已经注意到了，到现在为止，你的手还没有离开过键盘！</p>
+<p>在 VS Code 中，一切都在你的指尖。大多数情况下，你都不用中止输入，不必腾出手来抓住鼠标到处寻找和点击——这不但影响了你的效率，也干扰了你的思路。</p>
+<p>如果你足够细心的话，你会发现 VS Code 侧边栏的 “源代码管理” 图标上，叠加了一个带有数字的圆点。这意味着 VS Code 内置的 Git 检测到了当前站点与远程仓库之间存在未同步的内容。不过，远程仓库的管理和站点的部署，仍然必须使用 Hexo 的 deploy 命令。因为，在部署到远程仓库之前，Hexo 还执行了大量的操作，包括博文内容与布局的合成，以及生成最终的静态 HTML 文件等。</p>
+<p>当你完成了新博文的编辑，或者是修改了站点的配置之后，就可以执行一次清理，并通过部署来发表博文和备份站点。依然是激活集成终端，然后输入并执行如下命令——你还是不用离开键盘：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo clean</span><br><span class="line">INFO  Deleted database.</span><br><span class="line">...</span><br><span class="line">$ hexo d -g</span><br><span class="line">INFO  Start processing</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>至此，你已渐渐进入撰写博文的禅境。一切纷扰离你而去，万籁俱寂之中，你正全神贯注、心无旁骛地让你的思想和见解，静静地经由你的指尖流淌出来……</p>
+<h2 id="继续扫清障碍"><a href="#继续扫清障碍" class="headerlink" title="继续扫清障碍"></a>继续扫清障碍</h2><p>你已经能够专注无干扰地撰写博文了。不过，前行的路上，多少还有一些小障碍需要克服。在 Markdown 方面，VS Code 扩展市场中存在若干插件，适当的利用可进一步提高你的写作效率和质量。</p>
+<h3 id="markdownlint"><a href="#markdownlint" class="headerlink" title="markdownlint"></a>markdownlint</h3><p>markdownlint 是一个 Markdown 语法检查器。博文中不符合 Markdown 规范的内容将被标上波浪线，并提供相应的改进提示。这个扩展可确保你的博文具有更高的兼容性（可由 Hexo 之外的其它 Markdown 解析器顺利读取），同时也可帮助你形成规范的语法习惯。</p>
+<blockquote>
+<p><strong>提示</strong>：按下 <strong>Ctrl+Shift+X</strong> 在侧边栏打开 “扩展” 面板，输入扩展名称即可自动执行搜索，找到所需扩展后，单击其右下角的 “安装” 按钮并耐心等待。安装完成后出现 “重新加载” 按钮，单击即可让新安装的扩展马上生效。</p>
+</blockquote>
+<h3 id="Markdown-Shortcuts"><a href="#Markdown-Shortcuts" class="headerlink" title="Markdown Shortcuts"></a>Markdown Shortcuts</h3><p>顾名思义，这个扩展为 VS Code 提供了一组插入 Markdown 标记的快捷键。尽管 Markdown 与 HTML 相比已非常简洁，但插入链接（<code>[a hyperlink](www.example.org)</code>）或图像（<code>![alt text](image_url.png)</code>）的标记仍然颇为复杂，尤其是在使用中文输入法时，时常会因忘记切换全角半角标点符号而反复犯错，极大地影响了输入的流畅性。安装此扩展后，只需：</p>
+<ul>
+<li>按下 <strong>Ctrl+L</strong>，然后，若已选定了链接文本，则直接粘贴事先复制好的目标URL；否则填入链接文本后再粘贴URL。</li>
+<li>要插入 Markdown 图像标记，可使用 <strong>Ctrl+Shift+L</strong> 快捷键。更多信息，靖参阅该扩展主页上的 “详细信息”。</li>
+</ul>
+<blockquote>
+<p><strong>提示</strong>：如果你使用 Chrome 浏览器的话，也可考虑使用名为 <a href="https://github.com/chitsaou/copy-as-markdown/" target="_blank" rel="noopener">copy-as-markdown</a> 的浏览器扩展，来直接从浏览器上获取 Markdown 格式的链接。</p>
+</blockquote>
+<p>Hexo 在图像路径解析方面似乎存在问题，在 VS Code 预览中正常显示的图像，往往无法显示在远程发布后的页面上，反之亦然。一种比较简明的解决方法是：把所有图片放入 source\imgs 文件夹中，在站点配置文件中设置 <code>permalink: :title/</code>，同时在博文中以 <code>../imgs/example.png</code> 的形式引用图像。这样，预览和发布的博文就都可以正确显示图像了。</p>
+<h3 id="VS-Code-pangu"><a href="#VS-Code-pangu" class="headerlink" title="VS Code-pangu"></a>VS Code-pangu</h3><p>这是一个非常简单的插件，用于在中文和英文字符之间插入一个空格，让最终的排版结果更美观。安装 VS Code-pangu 后，只需按下 <strong>F1</strong>、输入 <code>Why not add a space...</code> 并回车，即可给全文或选定的内容自动插入空格。</p>
+<p>Hexo 也有一个可以自动插入空格的插件 <a href="https://github.com/hexojs/hexo-filter-auto-spacing" target="_blank" rel="noopener">hexo-filter-auto-spacing</a>，安装该插件后再在站点配置文件中设置 <code>auto_spacing: true</code> 即可使用。</p>
+<p>不过，并非所有的中英文之间都适合插入空格，例如加粗的中文 <code>**提示**</code> ，自动插入空格后，最终的输出会变成 <code>** 提示 **</code>，失去加粗效果。因此，使用 VS Code-pangu 的可控性更好，可以在编辑器中更正不适当插入的空格。</p>
+<blockquote>
+<p><strong>注意</strong>：如果一次性在全文中插入了空格，则应在发布前进行检查，并删除掉意外插入的不必要的空格。</p>
+</blockquote>
+<h3 id="Markdown-Preview-Enhanced"><a href="#Markdown-Preview-Enhanced" class="headerlink" title="Markdown Preview Enhanced"></a>Markdown Preview Enhanced</h3><p>改善了 VS Code 的 Markdown 预览，可显示博文目录方便导航，并支持输出 HTML、PDF、eBook 等格式。</p>
+<h3 id="Hexo-tag-snippets"><a href="#Hexo-tag-snippets" class="headerlink" title="Hexo tag snippets"></a>Hexo tag snippets</h3><p>除标准的 Markdown 标记外，博文中也可以使用 Hexo 的 <a href="https://hexo.io/zh-cn/docs/tag-plugins.html" target="_blank" rel="noopener">自定义标记</a>。例如，下面的标记，可用于在博文中插入站内博文链接：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;% post_link slug [title] %&#125;</span><br></pre></td></tr></table></figure>
+<p>不过，要注意这些标签只有在 Hexo 才能正确解析，其它 Markdown 解析器很可能无法解析这些标记（实际上，VS Code 的预览就无法解析这些标记），因此应尽量慎用。</p>
+<p>如果确实需要使用 Hexo 标记，你可以安装名为 <strong>Hexo tag snippets</strong> 的 VS Code 扩展。该扩展把 Hexo 标记定义为代码片段，只需简短的输入几个字符，就可快速输入这些标记。例如，输入 <code>hcb</code> 并选择 “Code Block - General (Hexo tag snippets)”，可快速插入如下的代码块标记：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;% codeblock title lang:language  %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% endcodeblock %&#125;</span><br></pre></td></tr></table></figure>
+<p>默认时，VS Code 并未启用 Markdown 的智能感知。要在撰写博文时使用代码片段的功能，需要添加如下用户配置：</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">"[markdown]": &#123;</span><br><span class="line">    "editor.wordWrap": "on",</span><br><span class="line">    "editor.quickSuggestions": true</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>提示</strong>：对于 Markdown 来说，智能感知有利有弊。若感觉你的写作受到影响，并且你的博文内容只需要少量 Hexo 标记，则不要启用该功能。</p>
+</blockquote>
+<p>此外，你还可以在 VS Code 中定义你自己的代码片段。选择 <strong>文件 | 首选项 | 用户代码片段</strong>，打开 markdown.json 并输入如下内容，就可以使用 <code>hxpl</code> 和 <code>hxrm</code> 来快速插入站内博文链接和博文摘要的代码片段了：</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">"hexo post link": &#123;</span><br><span class="line">  "prefix": "hxpl",</span><br><span class="line">  "body": [</span><br><span class="line">    <span class="string">"&#123;% post_link $&#123;1:filename&#125; $&#123;2:title&#125; %&#125;$0"</span></span><br><span class="line">  ],</span><br><span class="line">  "description": "Link to blog article"</span><br><span class="line">&#125;,</span><br><span class="line"></span><br><span class="line">"hexo readmore": &#123;</span><br><span class="line">  "prefix": "hxrm",</span><br><span class="line">  "body": ["&lt;!--more--&gt;",</span><br><span class="line">    "$0"],</span><br><span class="line">  "description": "read more"</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上内容说明，除集成终端外，VS Code 强大的扩展能力，是又一个让它完胜其它 Markdown 编辑器的特性。扩展的可能性是无穷的，并且会随着时间的推移和社区的反馈而越来越好用。甚至，有必要的话，你还可以编写你自己的扩展。</p>
+<h1 id="尾声"><a href="#尾声" class="headerlink" title="尾声"></a>尾声</h1><p>经过一番跋涉，你终于达到了撰写博文的新境界。放松下来后，你可能会觉得 Hexo 的默认主题有些乏味。</p>
+<p>如果想要以全新的面貌来呈现你的博文，可访问 <a href="https://hexo.io/themes/" target="_blank" rel="noopener">Hexo 官方网站的主题页面</a>，找到你喜欢的主题，并按其说明把主题下载（通常是使用 <code>git clone</code> 命令）到 themes 文件夹中；然后在站点配置文件中，把 <code>theme: landscape</code> 中的 <code>landscape</code> 修改为新主题的名称。</p>
+<p>大多数主题在其自身文件夹中提供了 _config.yml 配置文件。利用这个主题配置文件，可以对主题的各种细节进行设置和调整。</p>
+<p>本篇到此为止，享受你的写作吧！</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>写得不错，发张奖状</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="czq 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="czq 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Hexo/" rel="tag"># Hexo</a>
+          
+            <a href="/tags/Visual-Studio-Code/" rel="tag"># Visual Studio Code</a>
+          
+            <a href="/tags/Markdown/" rel="tag"># Markdown</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/hexo-your-blog/" rel="next" title="Hexo 你的专属博客">
+                <i class="fa fa-chevron-left"></i> Hexo 你的专属博客
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">czq</p>
+              <p class="site-description motion-element" itemprop="description">Python, Hexo, Git</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">分类</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-name">标签</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Hexo-的常规写作方式"><span class="nav-text">Hexo 的常规写作方式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#关于-Hexo-的布局"><span class="nav-text">关于 Hexo 的布局</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于-Hexo-的模板"><span class="nav-text">关于 Hexo 的模板</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于标签和类别"><span class="nav-text">关于标签和类别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于-draft-和-page"><span class="nav-text">关于 draft 和 page</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#用-Visual-Studio-Code-撰写博文"><span class="nav-text">用 Visual Studio Code 撰写博文</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#进入写作禅境"><span class="nav-text">进入写作禅境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#继续扫清障碍"><span class="nav-text">继续扫清障碍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#markdownlint"><span class="nav-text">markdownlint</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Markdown-Shortcuts"><span class="nav-text">Markdown Shortcuts</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#VS-Code-pangu"><span class="nav-text">VS Code-pangu</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Markdown-Preview-Enhanced"><span class="nav-text">Markdown Preview Enhanced</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hexo-tag-snippets"><span class="nav-text">Hexo tag snippets</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#尾声"><span class="nav-text">尾声</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">czq</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Gemini</a> v6.0.6</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.6"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.6"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.6"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.6"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.6"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.6"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.6"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
