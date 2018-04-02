@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.6" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.6">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.6" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.0.6',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="提示 ：本文译自《Python 3 Object-oriented Programming, Second Edition》，Chapter 10: Python Design Patterns I。  在面向对象编程中，策略模式常用于作为抽象的演示。这种模式针对一个问题实现了不同的解决方案，每个解决方案都是一个不同的对象。客户端代码可在运行时，动态地选择最合适的实现。 一般情况下，不同的算法">
+<meta name="keywords" content="python, 设计模式, 策略模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【Python 与模式】策略模式">
+<meta property="og:url" content="https://dc1y.github.io/python-strategy-pattern/index.html">
+<meta property="og:site_name" content="dc1y">
+<meta property="og:description" content="提示 ：本文译自《Python 3 Object-oriented Programming, Second Edition》，Chapter 10: Python Design Patterns I。  在面向对象编程中，策略模式常用于作为抽象的演示。这种模式针对一个问题实现了不同的解决方案，每个解决方案都是一个不同的对象。客户端代码可在运行时，动态地选择最合适的实现。 一般情况下，不同的算法">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://dc1y.github.io/imgs/python_strategy_pattern_01.png">
+<meta property="og:updated_time" content="2018-03-31T13:29:39.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【Python 与模式】策略模式">
+<meta name="twitter:description" content="提示 ：本文译自《Python 3 Object-oriented Programming, Second Edition》，Chapter 10: Python Design Patterns I。  在面向对象编程中，策略模式常用于作为抽象的演示。这种模式针对一个问题实现了不同的解决方案，每个解决方案都是一个不同的对象。客户端代码可在运行时，动态地选择最合适的实现。 一般情况下，不同的算法">
+<meta name="twitter:image" content="https://dc1y.github.io/imgs/python_strategy_pattern_01.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://dc1y.github.io/python-strategy-pattern/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>【Python 与模式】策略模式 | dc1y</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">dc1y</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">笃行信道，自强不息</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+</li>
+
+      
+
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://dc1y.github.io/python-strategy-pattern/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="czq">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dc1y">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">【Python 与模式】策略模式</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-31T21:29:39+08:00">2018-03-31</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a></span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/python/设计模式/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p><strong> 提示 </strong>：本文译自《Python 3 Object-oriented Programming, Second Edition》，Chapter 10: Python Design Patterns I。</p>
+</blockquote>
+<p>在面向对象编程中，策略模式常用于作为抽象的演示。这种模式针对一个问题实现了不同的解决方案，每个解决方案都是一个不同的对象。客户端代码可在运行时，动态地选择最合适的实现。</p>
+<p>一般情况下，不同的算法有不同的权衡；某个算法可能比另一个算法更快，但使用更多的内存，而第三个算法则可能最适合于多 CPU 或分布式系统。下面是策略模式的 UML 图：</p>
+<p><img src="../imgs/python_strategy_pattern_01.png" alt="策略模式"><br><a id="more"></a></p>
+<p>连接到策略模式的 <strong>User</strong> 代码，只需知道它与 <strong>Abstraction</strong> 的接口交互。被选定的实际实现执行同样的任务，但采用了不同的方式；无论如何，接口都是相同的。</p>
+<h1 id="策略的示例"><a href="#策略的示例" class="headerlink" title="策略的示例"></a>策略的示例</h1><p>策略模式的标准示例是排序程序；多年来，人们发明了对一个对象集合进行排序的众多算法；快速排序，归并排序和堆排序都是快速的排序算法，具有不同的特性并各有所长，这取决于输入的大小和类型，如何输出以及系统的需求。</p>
+<p>如果我们有需要对一个集合进行排序的客户端代码，可给其传递一个带有 <code>sort()</code> 方法的对象。这个对象可以是 <code>QuickSorter</code> 或 <code>MergeSorter</code> 对象，但不管哪一个结果都一样：排序好的列表。用于执行排序的策略被从调用代码中抽象出来，使其成为可替换的模块。</p>
+<p>当然，在 Python 中我们通常只需调用 <code>sorted</code> 函数或 <code>list.sort</code> 方法，并相信其将以近乎最优的方式执行排序。因此，我们确实需要一个更合适的例子。</p>
+<p>让我们来考虑一个桌面墙纸管理器。当一张图像被显示在桌面背景时，它可以按不同的方式去适应屏幕的尺寸。例如，若图像小于屏幕，则可在屏幕上平铺、居中或放大到适应屏幕。还有其它更复杂的策略可供使用，如缩放至最大高度或宽度，将其组合到一个纯色的、半透明的或渐变的背景颜色，或者是其它操作。我们打算今后再添加这些策略，现在还是先从基本的策略开始。</p>
+<p>我们的策略对象接受两个输入：要显示的图像，以及包含屏幕宽度和高度的一个元组。这些策略均根据屏幕尺寸返回一个新的图像，并且这个图像被指定的策略修改为与屏幕相适应。本例需要你运行 <code>pip3 install pillow</code> 来安装 <code>pillow</code> 模块：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TiledStrategy</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">make_background</span><span class="params">(self, img_file, desktop_size)</span>:</span></span><br><span class="line">        in_img = Image.open(img_file)</span><br><span class="line">        out_img = Image.new(<span class="string">'RGB'</span>, desktop_size)</span><br><span class="line">        num_tiles =[</span><br><span class="line">            o // i + <span class="number">1</span> <span class="keyword">for</span> o, i <span class="keyword">in</span> zip(out_img.size, in_img.size)</span><br><span class="line">        ]</span><br><span class="line">        <span class="keyword">for</span> x <span class="keyword">in</span> range(num_tiles[<span class="number">0</span>]):</span><br><span class="line">            <span class="keyword">for</span> y <span class="keyword">in</span> range(num_tiles[<span class="number">1</span>]):</span><br><span class="line">                out_img.paste(in_img, (</span><br><span class="line">                    in_img.size[<span class="number">0</span>] * x,</span><br><span class="line">                    in_img.size[<span class="number">1</span>] * y,</span><br><span class="line">                    in_img.size[<span class="number">0</span>] * (x+<span class="number">1</span>),</span><br><span class="line">                    in_img.size[<span class="number">1</span>] * (y+<span class="number">1</span>)</span><br><span class="line">                ))</span><br><span class="line">        <span class="keyword">return</span> out_img</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CenteredStrategy</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">make_background</span><span class="params">(self, img_file, desktop_size)</span>:</span></span><br><span class="line">        in_img = Image.open(img_file)</span><br><span class="line">        out_img = Image.new(<span class="string">'RGB'</span>, desktop_size)</span><br><span class="line">        left = (out_img.size[<span class="number">0</span>] - in_img.size[<span class="number">0</span>]) // <span class="number">2</span></span><br><span class="line">        top = (out_img.size[<span class="number">1</span>] - in_img.size[<span class="number">1</span>]) // <span class="number">2</span></span><br><span class="line">        out_img.paste(in_img, (</span><br><span class="line">            left, top,</span><br><span class="line">            left + in_img.size[<span class="number">0</span>], top + in_img.size[<span class="number">1</span>]</span><br><span class="line">        ))</span><br><span class="line">    <span class="keyword">return</span> out_img</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ScaledStrategy</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">make_background</span><span class="params">(self, img_file, desktop_size)</span>:</span></span><br><span class="line">        in_img = Image.open(img_file)</span><br><span class="line">        out_img = in_img.resize(desktop_size)</span><br><span class="line">        <span class="keyword">return</span> out_img</span><br></pre></td></tr></table></figure>
+<p>这里我们有三个策略，每个策略都使用了 PIL 来执行它们的任务。各个策略都有一个 <code>make_background</code> 方法，该方法接受一组相同的参数。一经选定，相应的策略即被调用，并创建正确调整了大小的桌面图像。<code>TiledStrategy</code> 按输入图像铺满屏幕宽度和高度所需的数量进行循环，并在每个位置重复拷贝输入图像。<code>CenteredStrategy</code> 计算需要在四个边界留出多大的空间来让图像居中。<code>ScaledStrategy</code> 把图像强制调整为输出尺寸（忽略纵横比）。</p>
+<p>考虑一下在没有策略模式下，该如何实现在这些选项间的切换。我们必须把所有代码放入到一个巨大的方法中，并使用笨拙的 <code>if</code> 语句来选择所需的选项。每次加入新的策略，都会让这个方法更笨重。</p>
+<h1 id="Python-中的策略"><a href="#Python-中的策略" class="headerlink" title="Python 中的策略"></a>Python 中的策略</h1><p>前述策略模式的标准实现，尽管在许多面向对象的库中很常见，但在 Python 编程中却很少见。</p>
+<p>这些类的对象，除提供一个函数外无所作为。我们可以将这个函数命名为 <code>__call__</code>，轻松将其变成一个可直接调用的对象。由于没有其它数据与该对象关联，我们所要做的，只不过是创建一组顶级函数，并把它们作为策略传入即可。</p>
+<p>设计模式哲学的反对者会因此说，“因为 Python 有第一级的函数，因此策略模式是不必要的”。的确，Python 的第一级函数允许我们以更直接的方式实现策略模式。但了解该模式的存在，仍然可以帮助我们为程序选择正确的设计，并使用可读性更强的语法来实现它。当我们需要让客户端代码或最终用户从同一接口的多个实现中进行选择时，就应使用策略模式或其顶级函数的实现。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>写得不错，发张奖状</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="czq 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="czq 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag"># python</a>
+          
+            <a href="/tags/设计模式/" rel="tag"># 设计模式</a>
+          
+            <a href="/tags/策略模式/" rel="tag"># 策略模式</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/python-observer-pattern/" rel="next" title="【Python 与模式】观察者模式">
+                <i class="fa fa-chevron-left"></i> 【Python 与模式】观察者模式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/python-state-pattern/" rel="prev" title="【Python 与模式】状态模式">
+                【Python 与模式】状态模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">czq</p>
+              <p class="site-description motion-element" itemprop="description">Python, Hexo, Git</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">分类</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-name">标签</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#策略的示例"><span class="nav-text">策略的示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Python-中的策略"><span class="nav-text">Python 中的策略</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">czq</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Gemini</a> v6.0.6</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.6"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.6"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.6"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.6"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.6"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.6"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.6"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

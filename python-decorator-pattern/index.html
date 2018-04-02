@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.6" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.6">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.6" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.0.6',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="提示：本文译自《Python 3 Object-oriented Programming, Second Edition》，Chapter 10: Python Design Patterns I。  装饰器模式允许我们把提供核心功能的对象，“包裹”在改变这个功能的其它对象中。任何对象与这个经过装饰的对象交互时，可采用完全相同的方式，就像该对象并未经过装饰时一样（即，经过装饰的对象，具有与核心对">
+<meta name="keywords" content="python, 设计模式, 装饰器模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【python与模式】装饰器模式">
+<meta property="og:url" content="https://dc1y.github.io/python-decorator-pattern/index.html">
+<meta property="og:site_name" content="dc1y">
+<meta property="og:description" content="提示：本文译自《Python 3 Object-oriented Programming, Second Edition》，Chapter 10: Python Design Patterns I。  装饰器模式允许我们把提供核心功能的对象，“包裹”在改变这个功能的其它对象中。任何对象与这个经过装饰的对象交互时，可采用完全相同的方式，就像该对象并未经过装饰时一样（即，经过装饰的对象，具有与核心对">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://dc1y.github.io/imgs/python_decorator_pattern_01.png">
+<meta property="og:updated_time" content="2018-03-30T16:04:24.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【python与模式】装饰器模式">
+<meta name="twitter:description" content="提示：本文译自《Python 3 Object-oriented Programming, Second Edition》，Chapter 10: Python Design Patterns I。  装饰器模式允许我们把提供核心功能的对象，“包裹”在改变这个功能的其它对象中。任何对象与这个经过装饰的对象交互时，可采用完全相同的方式，就像该对象并未经过装饰时一样（即，经过装饰的对象，具有与核心对">
+<meta name="twitter:image" content="https://dc1y.github.io/imgs/python_decorator_pattern_01.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://dc1y.github.io/python-decorator-pattern/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>【python与模式】装饰器模式 | dc1y</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">dc1y</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">笃行信道，自强不息</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+</li>
+
+      
+
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://dc1y.github.io/python-decorator-pattern/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="czq">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dc1y">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">【python与模式】装饰器模式</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-31T00:04:24+08:00">2018-03-31</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a></span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/python/设计模式/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p><strong>提示</strong>：本文译自《Python 3 Object-oriented Programming, Second Edition》，Chapter 10: Python Design Patterns I。</p>
+</blockquote>
+<p>装饰器模式允许我们把提供核心功能的对象，“包裹”在改变这个功能的其它对象中。任何对象与这个经过装饰的对象交互时，可采用完全相同的方式，就像该对象并未经过装饰时一样（即，经过装饰的对象，具有与核心对象完全相同的接口）。</p>
+<p>装饰器模式有两种主要用途：</p>
+<ul>
+<li>改进某个组件向另一个组件发送数据时的响应</li>
+<li>支持多种可选行为</li>
+</ul>
+<p>第二种用途通常是多重继承的合理替代方案。我们可以构建一个核心对象，然后围绕它创建装饰器。由于装饰器对象具有与核心对象相同的接口，我们甚至还可以把它再包裹到另一个装饰器中。下面是装饰器的UML图：</p>
+<p><img src="../imgs/python_decorator_pattern_01.png" alt="装饰器模式"><br><a id="more"></a></p>
+<p>图中，Core及全部装饰器都实现了Interface。装饰器通过组合的方式，维护着一个指向Interface实例的引用。当被调用时，装饰器在调用它所包裹接口的之前或之后，执行额外的操作。被包裹的对象可以是另一个装饰器，也可以是核心功能。尽管多个装饰器可以彼此包裹，但处于所有装饰器“中心”的对象提供了核心功能。</p>
+<h1 id="装饰器示例"><a href="#装饰器示例" class="headerlink" title="装饰器示例"></a>装饰器示例</h1><p>让我们来看看一个使用TCP socket进行网络编程的例子。<code>socket.send()</code>接收一串输入字节，并将其输出到接收端的socket。有许多库采用了socket，并调用这个函数来发送数据流。让我们创建这样一个交互式shell，它等待来自客户端的连接，然后提示用户输入一个字符串作为响应：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">respond</span><span class="params">(client)</span>:</span></span><br><span class="line">    response = input(<span class="string">"Enter a value: "</span>)</span><br><span class="line">    client.send(bytes(response, <span class="string">'utf=8'</span>))</span><br><span class="line">    client.close()</span><br><span class="line"></span><br><span class="line">server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">server.bind((<span class="string">'localhost'</span>, <span class="number">2401</span>))</span><br><span class="line">server.listen(<span class="number">1</span>)</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">        client, addr = server.accept()</span><br><span class="line">        respond(client)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    server.close()</span><br></pre></td></tr></table></figure>
+<p><code>respond</code>函数接受一个socket参数，并提示用户输入作为应答的数据，然后发送该数据。为使用这个函数，我们构建了一个服务器socket，并让其监听本地计算机的2401端口（可随意选择）。当某个客户端建立了连接时，将调用<code>respond</code>函数，该函数在交互式地请求应答数据后，作出相应的响应。需要注意的重点是，<code>respond</code>函数只关注socket接口的两个方法：<code>send</code>和<code>close</code>。要测试这个对象，可编写一个简单的客户端，来连接到同一个端口，并在输出来自服务器的响应后退出：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">client.connect((<span class="string">'localhost, 2401))</span></span><br><span class="line"><span class="string">print("Received: &#123;0&#125;".format(client.recv(1024)))</span></span><br><span class="line"><span class="string">client.close()</span></span><br></pre></td></tr></table></figure>
+<p>使用这两个程序的步骤如下：</p>
+<ol>
+<li>在一个终端中启动服务器。</li>
+<li>打开另一个终端窗口，并运行客户端。</li>
+<li>在服务器窗口的 <strong>Enter a value:</strong> 提示中，键入一个值并回车。</li>
+<li>客户端将接收到你键入的内容，将其打印在控制台后退出。再一次运行客户端；服务器将再一次提示输入响应值。</li>
+</ol>
+<p>现在再看看服务器代码，这些代码有两个部分。<code>respond</code>函数把数据发送给一个socket对象。其余的脚本则负责创建这个socket对象。我们将创建两个装饰器，来自定义socket的行为，而不必扩展或修改socket本身。</p>
+<p>让我们先从“logging”装饰器开始。这个对象将把要发送的数据先输出到服务器控制台，然后再发送给客户端：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LogSocket</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, socket)</span>:</span></span><br><span class="line">        self.socket = socket</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">send</span><span class="params">(self, data)</span>:</span></span><br><span class="line">        print(<span class="string">"Sending &#123;0&#125; to &#123;1&#125;"</span>.format(data, self.socket.getpeername()[<span class="number">0</span>]))</span><br><span class="line">        self.socket.send(data)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">close</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.socket.close()</span><br></pre></td></tr></table></figure>
+<p>这个类装饰了一个socket对象，并向客户端socket提供了<code>send</code>和<code>close</code>接口。更完整的装饰器，应该同时实现（并且可能自定义）其余的socket方法。同时也应正确地实现<code>send</code>的所有参数（实际上该方法接受一个可选的标志参数），但是，我们想让示例保持简单！每次调用该对象的<code>send</code>方法时，它将把输出记录到屏幕，然后再使用原来的socket向客户端发送数据。</p>
+<p>要使用这个装饰器，我们只需修改一行代码。把调用<code>respond</code>时传入的socket，改为传入经过装饰的socket：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">respond(LogSocket(client))</span><br></pre></td></tr></table></figure>
+<p>尽管非常简单，但我们为何不扩展socket类并重写<code>send</code>方法呢？我们可以在进行日志记录后，再调用<code>super().send</code>来执行实际的发送。这个设计也没错。</p>
+<p>当面对装饰器和继承的选择时，若需根据某些条件动态地修改对象，则只能选择装饰器。例如，我们可能只想在服务器处于调试模式时，才启用日志装饰器。当有多于一种的可选行为时，装饰器也优胜于多重继承。作为示例，我们可编写另一个装饰器，以便在调用<code>send</code>时使用<code>gzip</code>来压缩数据：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> gzip</span><br><span class="line"><span class="keyword">from</span> io <span class="keyword">import</span> BytesIO</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GzipSocket</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, socket)</span>:</span></span><br><span class="line">        self.socket = socket</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">send</span><span class="params">(self, data)</span>:</span></span><br><span class="line">        buf = BytesIO()</span><br><span class="line">        zipfile = gzip.GzipFile(fileobj=buf, mode=<span class="string">"w"</span>)</span><br><span class="line">        zipfile.write(data)</span><br><span class="line">        zipfile.close()</span><br><span class="line">        self.socket.send(buf.getvalue())</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">close</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.socket.close()</span><br></pre></td></tr></table></figure>
+<p>这个版本的<code>send</code>方法在把数据发送给客户端之前，先对数据进行压缩。</p>
+<p>现在我们有了两个装饰器，我们可以编写代码，以便在响应时动态地切换装饰器。下面的示例并不完整，但演示了混搭装饰器应遵循的逻辑：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">client, addr = server.accept()</span><br><span class="line"><span class="keyword">if</span> log_send:</span><br><span class="line">    client = LoggingSocket(client)</span><br><span class="line"><span class="keyword">if</span> client.getpeername()[<span class="number">0</span>] <span class="keyword">in</span> compress_hosts:</span><br><span class="line">    client = GzipSocket(client)</span><br><span class="line">respond(client)</span><br></pre></td></tr></table></figure>
+<p>这段代码检查一个假想的、名为<code>log_send</code>的配置变量。若该变量启用，则把socket包裹在LoggingSocket中。同样，代码检查已连接的客户端是否存在于可接受压缩内容的地址列表中。若是，则把client再进一步包裹到GzipSocket装饰器中。注意根据配置和已连接客户端的情况，这两个装饰器可能全不或全部启用、或者是只启用其中一个。尝试用多重继承来编写这个例子，并看看结果有多乱！</p>
+<h1 id="Python中的装饰器"><a href="#Python中的装饰器" class="headerlink" title="Python中的装饰器"></a>Python中的装饰器</h1><p>装饰器模式在Python中很有用，但有其它做法。例如，我们可以使用猴子补丁（monkey-patching）来得到类似的效果，见第7章的相关讨论。单重继承也是一种选择，其中“可选”的计算在一个较大的方法中执行；而多重继承，也不能仅仅只为不适合于刚才的例子而完全否决。</p>
+<p>在Python中，在函数上应用这种模式相当常用。我们在前一章了解到，函数也是对象。实际上，函数的装饰是如此常见，以至于Python提供了一种特殊的语法，来方便对函数应用装饰器。</p>
+<p>例如，我们可以用更普遍的观点来观察日志的示例。除在调用socket的发送时记录日志外，记录对某些函数或方法的所有调用的日志可能也很有用。下面的示例实现了执行这个功能的装饰器：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">log_calls</span><span class="params">(func)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wrapper</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">        now = time.time()</span><br><span class="line">        print(<span class="string">"Calling &#123;0&#125; with &#123;1&#125; and &#123;2&#125;"</span>.format(func.__name__, args, kwargs))</span><br><span class="line">        return_value = func(*args, **kwargs)</span><br><span class="line">        print(<span class="string">"Executed &#123;0&#125; in &#123;1&#125;ms"</span>.format(func.__name__, time.time() - now))</span><br><span class="line">        <span class="keyword">return</span> return_value</span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">test1</span><span class="params">(a, b, c)</span>:</span></span><br><span class="line">        print(<span class="string">"\ttest1 called"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">test2</span><span class="params">(a, b)</span>:</span></span><br><span class="line">        print(<span class="string">"\ttest2 called"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">test3</span><span class="params">(a, b)</span>:</span></span><br><span class="line">        print(<span class="string">"\ttest3 called"</span>)</span><br><span class="line">        time.sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    test1 = log_calls(test1)</span><br><span class="line">    test2 = log_calls(test2)</span><br><span class="line">    test3 = log_calls(test3)</span><br><span class="line"></span><br><span class="line">    test1(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">    test2(<span class="number">4</span>, b=<span class="number">5</span>)</span><br><span class="line">    test3(<span class="number">6</span>, <span class="number">7</span>)</span><br></pre></td></tr></table></figure>
+<p>这个装饰器函数非常类似于我们前面探索的示例；在前面的例子中，装饰器接受一个类socket对象，并创建另一个类socket对象。在这里，我们的装饰器接受一个函数对象，并返回一个新的函数对象。这段代码由三个独立的任务组成：</p>
+<ul>
+<li>一个<code>log_calls</code>函数，它接受另一个函数</li>
+<li>这个函数（在内部）定义了一个名为<code>wrapper</code>的新函数，<code>wrapper</code>在调用传入的函数之前（及之后）执行了一些额外的操作</li>
+<li>返回这个新函数</li>
+</ul>
+<p>三个<code>test*</code>函数演示了装饰器的用法。<code>test3</code>包含了<code>sleep</code>调用来演示定时测试。我们把每一个函数传入到装饰器中，这个装饰器返回一个新函数。我们把这个新函数赋值给原来的变量名，实际上是用装饰过的函数替换掉了原来的函数。</p>
+<p>这种语法允许我们动态地建立经过装饰的函数对象，与装饰socket的示例一样；如果不替换变量名，我们甚至可以保留装饰过和未装饰的版本，以便在不同的情况下使用。</p>
+<p>这些装饰器所带来的修改，通常永久性地应用到各个函数上。在这种情况下，Python支持用一种特殊的语法，来在定义函数时应用装饰器。我们已在讨论<code>property</code>装饰器时看到这种语法；现在，让我们看看它的工作方式。</p>
+<p>与在定义方法之后再应用装饰器函数不同，我们可以使用<code>@decorator</code>语法来一次性完成装饰：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@log_calls</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test1</span><span class="params">(a, b, c)</span>:</span></span><br><span class="line">    print(<span class="string">"\ttest1 called"</span>)</span><br></pre></td></tr></table></figure>
+<p>这种语法的首要优点时，是我们可以在函数定义的同时，就看到它被装饰了。若在后面再应用装饰器，阅读代码的人，可能会没看到函数已被完全改变了。回答诸如这样的问题，“为什么我的程序日志函数调用了控制台？”，可能会变得非常困难！不过，这种语法只能应用到我们定义的函数，因为我们无法访问其它模块的源代码。如果需要装饰第三方库的函数，则必须使用前面的语法。</p>
+<p>除刚才看到的语法之外，还有更多的装饰器语法。在这里，我们没有足够的篇幅来探讨这个高级主题，因此，请查阅Python参考手册或其它教程，以获得更多信息。装饰器也可创建可调用对象，而不仅仅是返回函数的函数。类也可以被装饰；此时，装饰器返回一个新类，而不是一个新函数。最后，装饰器可以接受参数，并在逐个函数的基础上进行定制。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>写得不错，发张奖状</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="czq 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="czq 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag"># python</a>
+          
+            <a href="/tags/设计模式/" rel="tag"># 设计模式</a>
+          
+            <a href="/tags/装饰器模式/" rel="tag"># 装饰器模式</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/pywinauto-auto-your-gui/" rel="next" title="pywinauto，自动化你的 Windows GUI">
+                <i class="fa fa-chevron-left"></i> pywinauto，自动化你的 Windows GUI
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/python-observer-pattern/" rel="prev" title="【Python 与模式】观察者模式">
+                【Python 与模式】观察者模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">czq</p>
+              <p class="site-description motion-element" itemprop="description">Python, Hexo, Git</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">分类</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-name">标签</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#装饰器示例"><span class="nav-text">装饰器示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Python中的装饰器"><span class="nav-text">Python中的装饰器</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">czq</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Gemini</a> v6.0.6</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.6"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.6"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.6"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.6"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.6"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.6"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.6"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

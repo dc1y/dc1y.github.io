@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.6" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.6">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.6" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.0.6',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="提示 ：本文译自《Python 3 Object-oriented Programming, Second Edition》，Chapter 10: Python Design Patterns I。  状态模式在结构上类似于策略模式，但其意图和目的则区别很大。状态模式的目标是表达一个状态迁移系统：对象可明显处于某种特定状态，且某些动作可将其推向另一状态的系统。 在状态模式中，我们需要一个管理">
+<meta name="keywords" content="python, 设计模式, 状态模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【Python 与模式】状态模式">
+<meta property="og:url" content="https://dc1y.github.io/python-state-pattern/index.html">
+<meta property="og:site_name" content="dc1y">
+<meta property="og:description" content="提示 ：本文译自《Python 3 Object-oriented Programming, Second Edition》，Chapter 10: Python Design Patterns I。  状态模式在结构上类似于策略模式，但其意图和目的则区别很大。状态模式的目标是表达一个状态迁移系统：对象可明显处于某种特定状态，且某些动作可将其推向另一状态的系统。 在状态模式中，我们需要一个管理">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://dc1y.github.io/imgs/python_state_pattern_01.png">
+<meta property="og:image" content="https://dc1y.github.io/imgs/python_state_pattern_02.png">
+<meta property="og:updated_time" content="2018-04-02T02:43:44.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【Python 与模式】状态模式">
+<meta name="twitter:description" content="提示 ：本文译自《Python 3 Object-oriented Programming, Second Edition》，Chapter 10: Python Design Patterns I。  状态模式在结构上类似于策略模式，但其意图和目的则区别很大。状态模式的目标是表达一个状态迁移系统：对象可明显处于某种特定状态，且某些动作可将其推向另一状态的系统。 在状态模式中，我们需要一个管理">
+<meta name="twitter:image" content="https://dc1y.github.io/imgs/python_state_pattern_01.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://dc1y.github.io/python-state-pattern/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>【Python 与模式】状态模式 | dc1y</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">dc1y</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">笃行信道，自强不息</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+</li>
+
+      
+
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://dc1y.github.io/python-state-pattern/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="czq">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dc1y">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">【Python 与模式】状态模式</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-02T10:43:44+08:00">2018-04-02</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a></span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/python/设计模式/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p><strong> 提示 </strong>：本文译自《Python 3 Object-oriented Programming, Second Edition》，Chapter 10: Python Design Patterns I。</p>
+</blockquote>
+<p>状态模式在结构上类似于策略模式，但其意图和目的则区别很大。状态模式的目标是表达一个状态迁移系统：对象可明显处于某种特定状态，且某些动作可将其推向另一状态的系统。</p>
+<p>在状态模式中，我们需要一个管理器，或者是上下文类来提供一个切换状态的接口。在内部，这个类包含一个指向当前状态的指针；每个状态都知道可以进入其余的哪些状态，并根据所发生的动作来迁移到这些状态。</p>
+<p>因此，我们需要两种类，上下文类及多个状态类。上下文类维护当前的状态，并把动作委托给状态类。相对于调用上下文的对象来说，状态类一般是隐藏的；就像一个在内部执行状态管理的黑匣子。下面是状态模式的 UML 图：</p>
+<p><img src="../imgs/python_state_pattern_01.png" alt="状态模式"><br><a id="more"></a></p>
+<h1 id="状态示例"><a href="#状态示例" class="headerlink" title="状态示例"></a>状态示例</h1><p>为演示状态模式，让我们来建立一个 XML 解析工具。上下文类就是解析器本身。它将接受一个字符串作为输入，并把这个工具置于初始的解析状态。每一种状态都将 “吃掉” 一些字符，寻找某个特定值，并在找到这个值时，改变到其它状态。其目标是为每个标记及其内容创建一个节点对象树。为保持简单，我们将只解析 XML 标记及标记名的一个子集。这个工具将不处理标记上的属性。它将解析标记的文本内容，但不会试图解析在文本内包含标记的 “混合” 内容。下面是这个工具能够解析的一个 “简化版 XML” 文件的例子：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">book</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">author</span>&gt;</span>Dusty Phillips<span class="tag">&lt;/<span class="name">author</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">publisher</span>&gt;</span>Packt Publishing<span class="tag">&lt;/<span class="name">publisher</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Python 3 Object Oriented Programming<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">content</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">chapter</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">number</span>&gt;</span>1<span class="tag">&lt;/<span class="name">number</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">title</span>&gt;</span>Object Oriented Design<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">chapter</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">chapter</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">number</span>&gt;</span>2<span class="tag">&lt;/<span class="name">number</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">title</span>&gt;</span>Objects In Python<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">chapter</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">content</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">book</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在着眼于状态和解析器之前，让我们考虑一下这个程序的输出。我们知道需要一个 <code>Node</code> 对象，但这个 <code>Node</code> 应该是怎么样的？嗯，显然它需要知道它所解析的标记的名称，并且由于它是一个树状结构，因此或许也应维护一个指向父节点的指针，以及一个有序的子节点清单。有些但并非所有节点都有文本值。让我们先来看看 <code>Node</code> 类：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Node</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, tag_name, parent=None)</span>:</span></span><br><span class="line">        self.parent = parent</span><br><span class="line">        self.tag_name = tag_name</span><br><span class="line">        self.children = []</span><br><span class="line">        self.text = <span class="string">""</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__str__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> self.text:</span><br><span class="line">            <span class="keyword">return</span> self.tag_name + <span class="string">":"</span> + self.text</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> self.tag_name</span><br></pre></td></tr></table></figure>
+<p>这个类在初始化时设置了默认的属性值。提供了 <code>__str__</code> 方法来在解析完成时可视化其树状结构。</p>
+<p>现在，按照示例的说明，我们需要考虑解析器具备哪些状态。显然它应该从一个还没有处理任何节点的状态开始。我们还需要处理起始标记和结束标记的状态。当我们处于带文本标记的内部时，也必须有一个单独的状态来执行处理。</p>
+<p>切换状态可能比较麻烦；我们怎么才能知道下一个节点是起始标记、结束标记，还是文本节点？我们可以在每种状态中加入一点逻辑来解决这个问题，但实际上更好的做法，是创建一个新的状态，其唯一的功能就是确定接着要切换到哪个状态。若将这个状态称为 <strong>ChildNode</strong>，则最终可得到如下状态：</p>
+<ul>
+<li><strong>FirstTag</strong></li>
+<li><strong>ChildNode</strong></li>
+<li><strong>OpenTag</strong></li>
+<li><strong>CloseTag</strong></li>
+<li><strong>Text</strong></li>
+</ul>
+<p><strong>FirstTag</strong> 状态将切换到 <strong>ChildNode</strong>，后者负责决定切换到其余三种状态的哪一种；当那些状态完成处理后，就切换回到 <strong>ChildNode</strong>。下面的状态迁移图显示了可用的状态变化：</p>
+<p><img src="../imgs/python_state_pattern_02.png" alt="状态迁移"></p>
+<p>这些状态将接受 “剩余未处理的字符串”，尽可能多地处理它们能够解析的内容，然后告诉解析器继续处理余下的内容。让我们先来建立 <code>Parser</code> 类：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Parser</span></span></span><br><span class="line"><span class="class">    <span class="title">def</span> <span class="title">__init__</span><span class="params">(self, parse_string)</span>:</span></span><br><span class="line">        self.parse_string = parse_string</span><br><span class="line">        self.root = <span class="keyword">None</span></span><br><span class="line">        self.current_node = <span class="keyword">None</span></span><br><span class="line">        self.state = FirstTag()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process</span><span class="params">(self, remaining_string)</span>:</span></span><br><span class="line">        remaining = self.state.process(remaining_string, self)</span><br><span class="line">        <span class="comment"># 上面的 state.process 在解析完成后，把 parser 切换到另一个状态，</span></span><br><span class="line">        <span class="comment"># 故下面的递归调用，将会执行新的 state.process 方法</span></span><br><span class="line">        <span class="keyword">if</span> remaining:</span><br><span class="line">            self.process(remaining)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">start</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.process(self.parse_string)</span><br></pre></td></tr></table></figure>
+<p>初始化器在类中建立了几个供各状态访问的变量。<code>parse_string</code> 实例变量是我们将要解析的文本。<code>root</code> 节点是 XML 结构中的 “顶级” 节点。<code>current_node</code> 实例变量是当前向其添加子级的节点。</p>
+<p>这个解析器的重要特征是其 <code>process</code> 方法，它接受剩余的字符串，并将其传递给当前状态。解析器本身（<code>self</code> 参数）也被传递给状态的 <code>process</code> 方法，以便状态能够访问并修改其变量。状态在完成处理后，必须返回剩余未解析的字符串。随后解析器递归地对剩余字符串调用 <code>process</code> 方法，以便建立余下的树状结构。</p>
+<p>现在，让我们看看 <code>FirstTag</code> 状态：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FirstTag</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process</span><span class="params">(self, remaining_string, parser)</span>:</span></span><br><span class="line">        i_start_tag = remaining_string.find(<span class="string">'&lt;'</span>)</span><br><span class="line">        i_end_tag = remaining_string.find(<span class="string">'&gt;'</span>)</span><br><span class="line">        tag_name = remaining_string[i_start_tag+<span class="number">1</span> : i_end_tag]</span><br><span class="line">        root = Node(tag_name)</span><br><span class="line">        parser.root = parser.current_node = root</span><br><span class="line">        parser.state = ChildNode()</span><br><span class="line">        <span class="keyword">return</span> remaining_string[i_end_tag+<span class="number">1</span>:]</span><br></pre></td></tr></table></figure>
+<p>这个状态找到第一个标记的开始和结束尖括号的索引号（<code>i_</code> 表示 index）。你可能觉得这个状态是不必要的，因为 XML 要求在起始标记之前不应有文本。但是，此处却可能有空白字符需要忽略；这就是我们搜索开始尖括号、而不是假定它是文档中的第一个字符的原因。注意这段代码假定了文件是有效的输入。正式的实现应严格测试无效的输入，并尝试恢复或显示详尽的错误消息。</p>
+<p>这个方法提取标记的名称，并将其赋值给解析器的根节点。同时也赋值给 <code>current_node</code>，因为它也是接下来要添加子级的节点。</p>
+<p>然后就是实现的部分：方法把解析器的当前状态改变到 <code>ChildNode</code> 状态。随后返回剩余的字符串（从开始标记之后开始）以作进一步处理。</p>
+<p><code>ChildNode</code> 状态看似复杂，实际上只是一组条件语句：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ChildNode</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process</span><span class="params">(self, remaining_string, parser)</span>:</span></span><br><span class="line">        stripped = remaining_string.strip()</span><br><span class="line">        <span class="keyword">if</span> stripped.startswith(<span class="string">"&lt;/"</span>):</span><br><span class="line">            parser.state = CloseTag()</span><br><span class="line">        <span class="keyword">elif</span> stripped.startswith(<span class="string">"&lt;"</span>):</span><br><span class="line">            parser.state = OpenTag()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            parser.state = TextNode()</span><br><span class="line">        <span class="keyword">return</span> stripped</span><br></pre></td></tr></table></figure>
+<p><code>strip()</code> 调用从字符串中移除空白字符。随后确定解析器的下一个状态是起始或结束标记，还是文本字符串。根据条件语句的结果，把解析器设定到某个特定状态，然后让它解析剩余的字符串。</p>
+<p><code>OpenTag</code> 状态类似于 <code>FirstTag</code> 状态，不同的是，它把新创建的节点添加到 <code>current_node</code> 对象的 <code>children</code>，并将其设定为新的 <code>current_node</code>。在继续之前，还把解析器再次设定为 <code>ChildNode</code> 状态：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OpenTag</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process</span><span class="params">(self, remaining_string, parser)</span>:</span></span><br><span class="line">        i_start_tag = remaining_string.find(<span class="string">'&lt;'</span>)</span><br><span class="line">        i_end_tag = remaining_string.find(<span class="string">'&gt;'</span>)</span><br><span class="line">        tag_name = remaining_string[i_start_tag+<span class="number">1</span> : i_end_tag]</span><br><span class="line">        node = Node(tag_name, parser.current_node)</span><br><span class="line">        parser.current_node.children.append(node)</span><br><span class="line">        parser.current_node = node</span><br><span class="line">        parser.state = ChildNode()</span><br><span class="line">        <span class="keyword">return</span> remaining_string[i_end_tag+<span class="number">1</span>:]</span><br></pre></td></tr></table></figure>
+<p><code>CloseTag</code> 状态的做法基本相反；它把解析器的 <code>current_node</code> 设置回父节点，以便外围标记的后续子级可添加到这个父节点：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CloseTag</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process</span><span class="params">(self, remaining_string, parser)</span>:</span></span><br><span class="line">        i_start_tag = remaining_string.find(<span class="string">'&lt;'</span>)</span><br><span class="line">        i_end_tag = remaining_string.find(<span class="string">'&gt;'</span>)</span><br><span class="line">        <span class="keyword">assert</span> remaining_string[i_start_tag+<span class="number">1</span>] == <span class="string">"/"</span></span><br><span class="line">        tag_name = remaining_string[i_start_tag+<span class="number">2</span> : i_end_tag]</span><br><span class="line">        <span class="keyword">assert</span> tag_name == parser.current_node.tag_name</span><br><span class="line">        parser.current_node = parser.current_node.parent</span><br><span class="line">        parser.state = ChildNode()</span><br><span class="line">        <span class="keyword">return</span> remaining_string[i_end_tag+<span class="number">1</span>:].strip()</span><br></pre></td></tr></table></figure>
+<p>两个 <code>assert</code> 语句用于确认解析字符串的一致性。方法末尾的 <code>if</code> 语句（代码似乎有误）确保处理完成后终止程序。若节点的父级为 <code>None</code>，则意味着我们正在处理根节点。</p>
+<p>最后，<code>TextNode</code> 只是简单地提取下一个结束标记之前的文本，并将其设置为当前节点的值：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TextNode</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process</span><span class="params">(self, remaining_string, parser)</span>:</span></span><br><span class="line">        i_start_tag = remaining_string.find(<span class="string">'&lt;'</span>)</span><br><span class="line">        text = remaining_string[:i_start_tag]</span><br><span class="line">        parser.current_node.text = text</span><br><span class="line">        parser.state = ChildNode()</span><br><span class="line">        <span class="keyword">return</span> remaining_string[i_start_tag:]</span><br></pre></td></tr></table></figure>
+<p>现在，必须设置解析器对象的初始状态设置。初始状态是一个 <code>FirstTag</code> 对象，因此只需将下面语句添加到 <code>__init__</code> 方法中：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.state = FirstTag()</span><br></pre></td></tr></table></figure>
+<p>要测试这个类，可添加一个主脚本来从命令行打开一个文件，执行解析，并打印生成的节点：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ ==<span class="string">"__main__"</span>:</span><br><span class="line">    <span class="keyword">import</span> sys</span><br><span class="line">    <span class="keyword">with</span> open(sys.argv[<span class="number">1</span>]) <span class="keyword">as</span> file:</span><br><span class="line">        contents = file.read()</span><br><span class="line">        p = Parser(contents)</span><br><span class="line">        p.start()</span><br><span class="line"></span><br><span class="line">        nodes = [p.root]</span><br><span class="line">        <span class="keyword">while</span> nodes:</span><br><span class="line">            node = nodes.pop(<span class="number">0</span>)</span><br><span class="line">            print(node)</span><br><span class="line">            nodes = node.children + nodes</span><br></pre></td></tr></table></figure>
+<p>这段代码打开指定的文件，加载其内容，并解析出结果。然后依次打印每个节点及其子级。节点类的 <code>__str__</code> 方法负责格式化节点以便打印。若对前面的 XML 例子运行这个脚本，其输出如下：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">book</span><br><span class="line">author: Dusty Phillips</span><br><span class="line">publisher: Packt Publishing</span><br><span class="line">title: Python 3 Object Oriented Programming</span><br><span class="line">content</span><br><span class="line">chapter</span><br><span class="line">number: 1</span><br><span class="line">title: Object Oriented Design</span><br><span class="line">chapter</span><br><span class="line">number: 2</span><br><span class="line">title: Objects In Python</span><br></pre></td></tr></table></figure>
+<p>与原始的简化版 XML 的内容相对比，可发现解析器的确可以工作。</p>
+<h1 id="状态与策略的对比"><a href="#状态与策略的对比" class="headerlink" title="状态与策略的对比"></a>状态与策略的对比</h1><p>状态模式看起来与策略模式非常相似；的确，它们的 UML 图是相同的。它们的实现也是相同的；我们甚至可以使用第一级函数来充当状态，而不是把它们包裹在对象中，就像在策略模式中那样。</p>
+<p>尽管这两种模式有相同的结构，但它们解决的是完全不同的问题。策略模式用于在运行时选择一种算法；一般来说，只能从算法中选择其中之一来处理特定的用例。而状态模式的主旨，在于随着某个过程的进展，而动态地在不同状态间切换。在代码中，主要区别是策略模式通常并不知道其它策略对象。但在状态模式中，状态及上下文都需要知道它们可以切换到其余的哪一个状态。</p>
+<h1 id="状态迁移作为协同程序"><a href="#状态迁移作为协同程序" class="headerlink" title="状态迁移作为协同程序"></a>状态迁移作为协同程序</h1><p>状态模式是针对状态迁移问题的标准面向对象解决方案。然而，这个模式的代码相当繁琐。你可以通过把对象构建为协同程序来得到类似的效果。还记得我们在第 9 章建立的正则表达式日志文件解析器吗？这就是一个隐晦的状态迁移问题，其实现与定义状态模式所需的全部对象（或函数）的主要区别，在于协同程序解决方案可让我们把更多的样板代码编写在语言结构中。这是两种实现，没有哪一种天生优于另一种，但你可能会发现协同程序的可读性更好，相对于某种特定的 “可读性” 来说（你必须能够理解协同程序的语法）。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>写得不错，发张奖状</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="czq 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="czq 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag"># python</a>
+          
+            <a href="/tags/设计模式/" rel="tag"># 设计模式</a>
+          
+            <a href="/tags/状态模式/" rel="tag"># 状态模式</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/python-strategy-pattern/" rel="next" title="【Python 与模式】策略模式">
+                <i class="fa fa-chevron-left"></i> 【Python 与模式】策略模式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/python-singleton-pattern/" rel="prev" title="【Python 与模式】单例模式">
+                【Python 与模式】单例模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">czq</p>
+              <p class="site-description motion-element" itemprop="description">Python, Hexo, Git</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">分类</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-name">标签</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#状态示例"><span class="nav-text">状态示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#状态与策略的对比"><span class="nav-text">状态与策略的对比</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#状态迁移作为协同程序"><span class="nav-text">状态迁移作为协同程序</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">czq</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Gemini</a> v6.0.6</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.6"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.6"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.6"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.6"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.6"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.6"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.6"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
